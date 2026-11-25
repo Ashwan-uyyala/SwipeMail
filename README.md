@@ -1,0 +1,2 @@
+# SwipeMail
+This project WIP
