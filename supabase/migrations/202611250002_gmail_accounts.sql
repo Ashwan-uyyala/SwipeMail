@@ -1,0 +1,1 @@
+-- Gmail account connection schema placeholder.
