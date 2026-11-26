@@ -1,15 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { User } from "@supabase/supabase-js";
-import { LogOut, Mail } from "lucide-react";
 import { supabase } from "../lib/supabase";
-import { ThemeToggle, useTheme } from "../components/common/ThemeToggle";
+import { AppSidebar } from "../components/layout/AppSidebar";
+import { AppHeader } from "../components/layout/AppHeader";
+import { DashboardStats } from "../components/dashboard/DashboardStats";
+import { CompanyLogoGrid } from "../components/dashboard/CompanyLogoGrid";
+import { SwipeDeck } from "../components/swipe/SwipeDeck";
+import { EmailDetailsModal } from "../components/swipe/EmailDetailsModal";
+import { useMockEmails } from "../hooks/useMockEmails";
+import type { Email } from "../types/email";
+import type { EmailFilter } from "../hooks/useMockEmails";
 
 export function DashboardPage() {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
+  const cardSectionRef = useRef<HTMLElement | null>(null);
+  const emailState = useMockEmails();
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
@@ -26,51 +35,52 @@ export function DashboardPage() {
     navigate("/auth", { replace: true });
   }
 
-  const displayName =
-    user?.user_metadata.full_name ||
-    user?.user_metadata.name ||
-    user?.email ||
-    "Your account";
+  function selectFilter(filter: EmailFilter) {
+    emailState.selectFilter(filter);
+    window.requestAnimationFrame(() => {
+      window.setTimeout(() => {
+        cardSectionRef.current?.scrollIntoView({ behavior:"smooth", block:"start" });
+      }, 40);
+    });
+  }
+
+  const sectionHeading = emailState.selectedFilter === "all"
+    ? "All Emails"
+    : emailState.selectedFilter === "important"
+      ? "Important Emails"
+      : emailState.selectedFilter === "unread"
+        ? "Unread Emails"
+        : emailState.selectedFilter === "received"
+          ? "Received Emails"
+          : `${emailState.sender} Emails`;
+  const reviewedInCollection = emailState.filtered.filter((email) => emailState.reviewed.includes(email.id)).length;
 
   return (
-    <main className={`min-h-screen transition-colors duration-500 ${isDark ? "bg-slate-950" : "bg-slate-50"}`}>
-      <header className={`border-b transition-colors duration-500 ${isDark ? "border-slate-800 bg-slate-900" : "border-slate-200 bg-white"}`}>
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-xl bg-blue-600 text-white">
-              <Mail className="h-5 w-5" />
-            </div>
-            <span className={`font-semibold ${isDark ? "text-white" : "text-slate-950"}`}>SwipeMail</span>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span className={`hidden text-sm sm:block ${isDark ? "text-slate-400" : "text-slate-500"}`}>{displayName}</span>
-            <ThemeToggle />
-            <button
-              type="button"
-              onClick={signOut}
-              className={`grid h-10 w-10 place-items-center rounded-xl border transition ${
-                isDark
-                  ? "border-slate-700 bg-slate-800 text-slate-400 hover:text-white"
-                  : "border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900"
-              }`}
-              aria-label="Sign out"
-              title="Sign out"
-            >
-              <LogOut className="h-4 w-4" />
-            </button>
-          </div>
+    <main className="min-h-screen min-w-0 overflow-x-hidden bg-slate-50 text-slate-900 transition-colors duration-500 dark:bg-slate-950 dark:text-slate-100">
+      <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} onSignOut={signOut} />
+      <div className="min-h-screen min-w-0 lg:ml-[238px]">
+        <AppHeader user={user} onMenuOpen={() => setMobileOpen(true)} />
+        <div className="mx-auto min-w-0 max-w-[1180px] px-3 pb-10 pt-4 sm:px-6 md:px-8 lg:px-10">
+          <DashboardStats selected={emailState.selectedFilter} onSelect={selectFilter} />
+          <section ref={cardSectionRef} className="scroll-mt-[92px] mt-6 rounded-[26px] border border-slate-200/80 bg-white px-3 py-5 dark:border-slate-800 dark:bg-slate-900/40 sm:px-6">
+            <SwipeDeck
+              visible={emailState.visible}
+              current={emailState.current}
+              reviewedCount={reviewedInCollection}
+              total={emailState.filtered.length}
+              heading={sectionHeading}
+              onAction={emailState.performAction}
+              onOpen={setSelectedEmail}
+              onReset={emailState.reset}
+            />
+          </section>
+          <CompanyLogoGrid
+            selected={emailState.sender}
+            onSelect={(company) => selectFilter(company === "All" ? "all" : `company:${company}`)}
+          />
         </div>
-      </header>
-
-      <section className="mx-auto max-w-6xl px-6 py-12">
-        <h1 className={`text-3xl font-semibold tracking-tight ${isDark ? "text-white" : "text-slate-950"}`}>
-          Welcome, {displayName}
-        </h1>
-        <p className={`mt-3 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-          Google sign-in is ready. The swipe inbox interface will be added next.
-        </p>
-      </section>
+      </div>
+      <EmailDetailsModal email={selectedEmail} onClose={() => setSelectedEmail(null)} />
     </main>
   );
 }

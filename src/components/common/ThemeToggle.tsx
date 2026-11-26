@@ -3,6 +3,7 @@ import {
   useContext,
   useEffect,
   useState,
+  useRef,
   type PropsWithChildren,
 } from "react";
 import { Moon, Sun } from "lucide-react";
@@ -22,9 +23,11 @@ export function ThemeProvider({ children }: PropsWithChildren) {
     if (savedTheme === "light" || savedTheme === "dark") return savedTheme;
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   });
+  const themeRef = useRef<Theme>(theme);
 
   useEffect(() => {
     const root = document.documentElement;
+    themeRef.current = theme;
     root.classList.remove("light", "dark");
     root.classList.add(theme);
     root.dataset.theme = theme;
@@ -33,18 +36,24 @@ export function ThemeProvider({ children }: PropsWithChildren) {
   }, [theme]);
 
   function toggleTheme() {
-    setTheme((currentTheme) => {
-      const nextTheme = currentTheme === "light" ? "dark" : "light";
-      const root = document.documentElement;
+    const nextTheme: Theme = themeRef.current === "light" ? "dark" : "light";
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      root.classList.remove("light", "dark");
-      root.classList.add(nextTheme);
-      root.dataset.theme = nextTheme;
-      root.style.colorScheme = nextTheme;
-      window.localStorage.setItem("swipemail-theme", nextTheme);
+    if (!reduceMotion && "startViewTransition" in document) {
+      const transitionDocument = document as Document & {
+        startViewTransition: (update: () => void) => { ready: Promise<void>; finished: Promise<void> };
+      };
+      const transition = transitionDocument.startViewTransition(() => {
+        themeRef.current = nextTheme;
+        setTheme(nextTheme);
+      });
+      transition.ready.catch(() => undefined);
+      transition.finished.catch(() => undefined);
+      return;
+    }
 
-      return nextTheme;
-    });
+    themeRef.current = nextTheme;
+    setTheme(nextTheme);
   }
 
   return (

@@ -1,46 +1,44 @@
-# SwipeMail
+The ripple animation direction is already correct. Do not change its direction, origin, or overall animation flow.
 
-SwipeMail is a full-stack email management foundation that organizes Gmail messages with a four-direction, Tinder-like card deck.
+However, there is one major issue: a white screen/white flash appears during the transition. I absolutely do not want that.
 
-## Stack
+### Fix the transition without changing its current behaviour.
 
-- React, TypeScript, Vite
-- Tailwind CSS
-- shadcn-style reusable UI structure
-- Lucide React and Motion
-- React Router DOM
-- TanStack Query
-- Supabase Auth, PostgreSQL, and Edge Functions
+1. Completely eliminate the white screen, white flash, and any intermediate blank frame.
+2. Never show a white overlay when switching from dark mode to light mode or vice versa.
+3. The incoming theme must be revealed directly over the existing theme.
+4. The transition should be a continuous visual flow, not a sequence of screen colour replacements.
+5. Preserve the existing top-right to bottom-left diagonal ripple direction.
 
-## Architecture
+### Feather and transparency
 
-- `src/app` contains application providers and routing.
-- `src/components` contains reusable common, layout, dashboard, swipe, and settings UI modules.
-- `src/pages` contains route-level views.
-- `src/hooks` contains React hooks.
-- `src/services` contains application service boundaries.
-- `src/lib` contains shared library configuration and utilities.
-- `src/types` contains TypeScript models.
-- `src/utils` contains pure helper functions.
-- `src/constants` contains route and swipe-action constants.
-- `src/styles` contains global styling.
-- `supabase/migrations` contains database migrations.
-- `supabase/functions` contains future Edge Functions.
-- `docs` contains architectural and implementation documentation.
+This is the most important visual requirement:
 
-## Local setup
+- Use approximately 50% feathering at the expanding ripple boundary.
+- Create a naturally blended, semi-transparent transition edge.
+- The incoming theme should gradually blend with the outgoing theme.
+- Avoid sharp circular boundaries.
+- Avoid bright white outlines, artificial glowing rings, or opaque white layers.
+- The feathered boundary should feel soft, fluid, and premium.
+- The transparency must reveal the actual underlying old theme rather than a white background.
 
-```powershell
-npm install
-Copy-Item .env.example .env.local
-npm run dev
-```
+### Technical requirements
 
-The development server is available at the URL printed by Vite, normally `http://localhost:5173`.
+- Inspect the existing View Transitions API / CSS animation implementation.
+- Identify what is causing the white flash.
+- Remove any intermediate white background or hardcoded white transition layer.
+- Ensure the outgoing theme snapshot and incoming theme snapshot use the correct theme colours.
+- Avoid applying an opaque white background to `::view-transition-old`, `::view-transition-new`, or the transition overlay.
+- Ensure the transition remains continuous without flickering.
+- Keep the theme state and persistence logic unchanged.
+- Prevent any blank frame between theme changes.
 
-## Manual configuration
+### Final expected result
 
-- Create a Supabase project and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
-- Configure the Google OAuth client and set `VITE_GOOGLE_CLIENT_ID`.
-- Enable and scope the Gmail API in Google Cloud.
-- Set `OPENAI_API_KEY` only in an appropriate secure backend environment for future AI features.
+Dark → Light: The light theme naturally expands from the top-right corner, with a soft 50% feathered boundary, gradually blending into the existing dark theme.
+
+Light → Dark: The dark theme naturally expands from the top-right corner, with the same soft feathered boundary, gradually blending into the existing light theme.
+
+**Do not redesign anything. Do not change the animation direction. Just eliminate the white flash and make the existing ripple transition look natural, transparent, smooth, and premium.**
+
+Test both directions in the actual browser before finishing.

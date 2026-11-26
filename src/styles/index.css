@@ -2,10 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html,
 body,
 #root {
   min-height: 100%;
+}
+
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 html {
@@ -15,4 +28,62 @@ html {
 
 html.dark {
   background: #020617;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+  clip-path: circle(0 at 100% 0%);
+  animation: theme-radial-reveal 1000ms cubic-bezier(.22,1,.60,0.5) forwards;
+  filter: none;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+@keyframes theme-radial-reveal {
+  from { clip-path: circle(0 at 100% 0%); }
+  to { clip-path: circle(150vmax at 100% 0%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 1ms !important;
+  }
+}
+
+.email-deck {
+  height: 470px;
+}
+
+.email-card {
+  width: calc(100% - 24px);
+  max-width: 430px;
+  height: 470px;
+  min-width: 0;
+}
+
+@media (max-width: 639px) {
+  .email-deck,
+  .email-card {
+    height: 420px;
+  }
+
+  .email-card {
+    width: calc(100% - 16px);
+  }
+}
+
+@media (max-width: 359px) {
+  .email-deck,
+  .email-card {
+    height: 410px;
+  }
 }
