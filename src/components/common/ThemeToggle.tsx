@@ -81,9 +81,9 @@ export function ThemeToggle() {
       aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
       title={`Switch to ${isDark ? "light" : "dark"} mode`}
       onClick={toggleTheme}
-      className={`relative flex h-10 w-[72px] items-center overflow-hidden rounded-full border p-1 shadow-sm transition-all duration-500 ${
+      className={`dark-panel relative flex h-10 w-[72px] items-center overflow-hidden rounded-full border p-1 shadow-sm transition-all duration-500 ${
         isDark
-          ? "border-slate-700 bg-slate-800"
+          ? "border-white/10"
           : "border-slate-200 bg-slate-100"
       }`}
     >
@@ -101,7 +101,7 @@ export function ThemeToggle() {
         style={{ transform: `translateX(${isDark ? 32 : 0}px)` }}
         className={`relative z-10 grid h-8 w-8 shrink-0 place-items-center rounded-full shadow-md ring-1 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
           isDark
-            ? "bg-slate-700 text-blue-300 ring-slate-600"
+            ? "bg-black text-orange-300 ring-white/10"
             : "bg-white text-amber-500 ring-slate-200/50"
         }`}
       >

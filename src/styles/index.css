@@ -22,12 +22,55 @@ body,
 }
 
 html {
-  background: #f8fafc;
+  background: #f3f1ec;
   transition: background-color 500ms ease;
 }
 
 html.dark {
-  background: #020617;
+  background: #000;
+}
+
+body {
+  background-color: #f3f1ec;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+  transition: background-color 500ms ease, background-image 500ms ease;
+}
+
+html.dark body {
+  background-color: #000;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+}
+
+.dark .app-shell {
+  background-color: #000;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(32, 32, 32, 0.72), transparent 58%),
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 100% 100%, 32px 32px, 32px 32px;
+}
+
+.dark .dark-panel {
+  background-color: #000;
+  background-image: linear-gradient(145deg, #101010 0%, #000 72%);
+}
+
+.dark .company-card {
+  background-color: #000;
+  background-image: linear-gradient(145deg, #111 0%, #000 78%);
+}
+
+.folder-strip {
+  scrollbar-width: none;
+}
+
+.folder-strip::-webkit-scrollbar {
+  display: none;
 }
 
 ::view-transition-old(root),

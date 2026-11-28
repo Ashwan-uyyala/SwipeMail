@@ -20,8 +20,8 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
 
   if (session === undefined) {
     return (
-      <main className="grid min-h-screen place-items-center bg-slate-50">
-        <span className="h-8 w-8 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600" />
+      <main className="grid min-h-screen place-items-center bg-[#f3f1ec] dark:bg-black">
+        <span className="h-8 w-8 animate-spin rounded-full border-2 border-orange-500/25 border-t-orange-500" />
       </main>
     );
   }

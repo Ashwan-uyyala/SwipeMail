@@ -1,8 +1,7 @@
 import { AnimatePresence } from "motion/react";
 import { useState } from "react";
 import { RotateCcw } from "lucide-react";
-import type { Email } from "../../types/email";
-import type { SwipeAction } from "../../hooks/useMockEmails";
+import type { Email, SwipeAction } from "../../types/email";
 import { EmailCard } from "./EmailCard";
 import { SwipeControls } from "./SwipeControls";
 
@@ -33,16 +32,19 @@ export function SwipeDeck({ visible, current, reviewedCount, total, heading, onA
   }
 
   if (!current) {
+    const inboxIsEmpty = total === 0;
     return (
       <div className="flex h-[530px] flex-col items-center justify-center text-center">
-        <div className="grid h-16 w-16 place-items-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10">
+        <div className="grid h-16 w-16 place-items-center rounded-full bg-orange-500/10 text-orange-500">
           <RotateCcw className="h-7 w-7" />
         </div>
-        <h3 className="mt-5 text-xl font-bold text-slate-900 dark:text-white">You're all caught up!</h3>
-        <p className="mt-2 max-w-xs text-sm leading-6 text-slate-400">There are no more emails in this view.</p>
-        <button type="button" onClick={onReset} className="mt-5 h-11 rounded-xl bg-indigo-600 px-5 text-xs font-bold text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-700">
-          Restart demo
-        </button>
+        <h3 className="mt-5 text-xl font-bold text-slate-900 dark:text-white">{inboxIsEmpty ? "No emails in this folder" : "You're all caught up!"}</h3>
+        <p className="mt-2 max-w-xs text-sm leading-6 text-slate-400">{inboxIsEmpty ? "Gmail has no messages in this view right now." : "There are no more emails in this view."}</p>
+        {!inboxIsEmpty && (
+          <button type="button" onClick={onReset} className="mt-5 h-11 rounded-xl bg-orange-500 px-5 text-xs font-bold text-white shadow-[0_12px_28px_-12px_rgba(249,115,22,.8)] hover:bg-orange-600 active:scale-[.98]">
+            Review again
+          </button>
+        )}
       </div>
     );
   }
@@ -56,8 +58,8 @@ export function SwipeDeck({ visible, current, reviewedCount, total, heading, onA
         <span>Email {Math.min(reviewedCount + 1, total)} of {total}</span>
         <span>{progress}% reviewed</span>
       </div>
-      <div className="h-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-        <div className="h-full rounded-full bg-indigo-500 transition-all duration-500" style={{ width:`${progress}%` }} />
+      <div className="h-1 overflow-hidden rounded-full bg-black/[0.06] dark:bg-white/[0.08]">
+        <div className="h-full rounded-full bg-orange-500 transition-all duration-500" style={{ width:`${progress}%` }} />
       </div>
       <div className="email-deck relative mx-auto mt-6 w-full max-w-[430px]">
         <AnimatePresence>

@@ -1,44 +1,146 @@
-The ripple animation direction is already correct. Do not change its direction, origin, or overall animation flow.
+# SwipeMail – Integrate Real Gmail Inbox
 
-However, there is one major issue: a white screen/white flash appears during the transition. I absolutely do not want that.
+We have completed Google OAuth login using Supabase. Now implement actual Gmail integration.
 
-### Fix the transition without changing its current behaviour.
+## Main objective
 
-1. Completely eliminate the white screen, white flash, and any intermediate blank frame.
-2. Never show a white overlay when switching from dark mode to light mode or vice versa.
-3. The incoming theme must be revealed directly over the existing theme.
-4. The transition should be a continuous visual flow, not a sequence of screen colour replacements.
-5. Preserve the existing top-right to bottom-left diagonal ripple direction.
+When a user logs into SwipeMail using Google, fetch the emails from that same Google account and display them in the existing swipeable email-card interface.
 
-### Feather and transparency
+Do not use mock emails. Do not redesign the UI. Connect real Gmail data to the existing design.
 
-This is the most important visual requirement:
+## 1. Google OAuth permission
 
-- Use approximately 50% feathering at the expanding ripple boundary.
-- Create a naturally blended, semi-transparent transition edge.
-- The incoming theme should gradually blend with the outgoing theme.
-- Avoid sharp circular boundaries.
-- Avoid bright white outlines, artificial glowing rings, or opaque white layers.
-- The feathered boundary should feel soft, fluid, and premium.
-- The transparency must reveal the actual underlying old theme rather than a white background.
+Inspect the existing Supabase Google authentication implementation.
 
-### Technical requirements
+Update the Google OAuth request to request this scope:
 
-- Inspect the existing View Transitions API / CSS animation implementation.
-- Identify what is causing the white flash.
-- Remove any intermediate white background or hardcoded white transition layer.
-- Ensure the outgoing theme snapshot and incoming theme snapshot use the correct theme colours.
-- Avoid applying an opaque white background to `::view-transition-old`, `::view-transition-new`, or the transition overlay.
-- Ensure the transition remains continuous without flickering.
-- Keep the theme state and persistence logic unchanged.
-- Prevent any blank frame between theme changes.
+`https://www.googleapis.com/auth/gmail.modify`
 
-### Final expected result
+Use the appropriate OAuth parameters:
 
-Dark → Light: The light theme naturally expands from the top-right corner, with a soft 50% feathered boundary, gradually blending into the existing dark theme.
+- `access_type: offline`
+- `prompt: consent` when initially requesting Gmail authorization and obtaining a refresh token.
 
-Light → Dark: The dark theme naturally expands from the top-right corner, with the same soft feathered boundary, gradually blending into the existing light theme.
+Keep the existing Supabase authentication flow working.
 
-**Do not redesign anything. Do not change the animation direction. Just eliminate the white flash and make the existing ripple transition look natural, transparent, smooth, and premium.**
+The user must explicitly grant Gmail access. Do not assume that signing in automatically grants Gmail permissions.
 
-Test both directions in the actual browser before finishing.
+## 2. Secure Google token handling
+
+After successful OAuth:
+
+- Retrieve the Google provider access token.
+- Retrieve the Google provider refresh token when provided.
+- Associate the Google tokens with the authenticated Supabase user.
+- Store tokens securely on the server side.
+- Encrypt sensitive tokens at rest.
+- Never expose refresh tokens in frontend code.
+- Never store Google access or refresh tokens in localStorage.
+- Never expose Google Client Secret in frontend code.
+- Ensure one user's tokens can never be accessed by another user.
+
+Use the existing backend architecture. If needed, implement Supabase Edge Functions and a secure database structure with appropriate Row Level Security policies.
+
+Implement token refresh on the server when the Google access token expires.
+
+Do not assume Supabase automatically refreshes Google provider tokens.
+
+## 3. Fetch real Gmail messages
+
+Use the Gmail API:
+
+`GET https://gmail.googleapis.com/gmail/v1/users/me/messages`
+
+Fetch the user's inbox messages.
+
+Initially fetch the latest 20 messages.
+
+For each message, retrieve the necessary details:
+
+- Sender name
+- Sender email address
+- Subject
+- Email date
+- Email snippet / preview
+- Read or unread status
+- Important status
+- Message ID
+- Thread ID
+- Labels
+
+Use Gmail API message details to retrieve the actual message metadata.
+
+Handle pagination so that additional emails can be loaded when needed.
+
+## 4. Connect Gmail data to existing cards
+
+Replace the existing mock email data with real Gmail messages.
+
+Map the Gmail response into the existing email-card data structure.
+
+Preserve the current SwipeMail design:
+
+- Sender logo or avatar
+- Sender name
+- Sender email
+- Subject
+- Date
+- Email preview
+- Existing action buttons
+- Existing swipe animations
+- Directional swipe border effects
+
+If a sender logo is unavailable, show a circular avatar with the sender's initial.
+
+Do not change the existing swipe gesture behavior.
+
+## 5. Loading and error states
+
+Add proper states:
+
+- Connecting to Gmail
+- Fetching inbox
+- Emails successfully loaded
+- No emails found
+- Gmail permission denied
+- Access token expired
+- Gmail API error
+- Network error
+
+Show a clean loading indicator while fetching messages.
+
+If the user has not granted Gmail permission, show a Connect Gmail action.
+
+## 6. Account handling
+
+Use the Google account that the user actually authenticated with.
+
+Display the connected Gmail address somewhere accessible in the app, such as the account menu.
+
+Do not accidentally fetch emails from a different Google account.
+
+Provide a disconnect option that revokes or removes the stored Gmail credentials securely.
+
+## 7. Development requirements
+
+Before coding, inspect:
+
+- Existing Supabase client configuration
+- Google login implementation
+- OAuth callback handling
+- Existing database tables
+- Existing email card components
+- Existing mock email data
+- Current Vercel deployment setup
+
+Reuse existing components and architecture.
+
+Do not create duplicate authentication flows unnecessarily.
+
+Do not break existing login, theme switching, folder navigation, or swipe functionality.
+
+Implement this incrementally. First complete OAuth permission and secure token handling. Then fetch Gmail messages. Finally connect them to the existing cards.
+
+After implementation, explain what configuration or deployment steps I need to perform manually.
+
+**Success condition:** I log into SwipeMail with my Gmail account, grant Gmail permission, and see my actual inbox emails displayed as swipeable cards.

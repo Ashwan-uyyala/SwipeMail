@@ -1,23 +1,24 @@
-import { mockEmails } from "../../data/mockEmails";
+import type { Email } from "../../types/email";
 import { CompanyLogo } from "../common/CompanyLogo";
 
 interface CompanyLogoGridProps {
+  emails: Email[];
   selected: string;
   onSelect: (company: string) => void;
 }
 
-export function CompanyLogoGrid({ selected, onSelect }: CompanyLogoGridProps) {
-  const companies = Array.from(new Set(mockEmails.map((email) => email.companyName))).map((name) => {
-    const emails = mockEmails.filter((email) => email.companyName === name);
+export function CompanyLogoGrid({ emails, selected, onSelect }: CompanyLogoGridProps) {
+  const companies = Array.from(new Set(emails.map((email) => email.companyName))).map((name) => {
+    const companyEmails = emails.filter((email) => email.companyName === name);
     return {
       name,
-      initial: emails[0].companyInitial,
-      count: emails.length,
-      unread: emails.filter((email) => email.isUnread).length,
+      initial: companyEmails[0].companyInitial,
+      count: companyEmails.length,
+      unread: companyEmails.filter((email) => email.isUnread).length,
     };
   });
 
-  const options = [{ name:"All", initial:"All", count:mockEmails.length, unread:mockEmails.filter((email) => email.isUnread).length }, ...companies];
+  const options = [{ name:"All", initial:"All", count:emails.length, unread:emails.filter((email) => email.isUnread).length }, ...companies];
 
   return (
     <section className="mt-8">
@@ -33,20 +34,20 @@ export function CompanyLogoGrid({ selected, onSelect }: CompanyLogoGridProps) {
             type="button"
             key={company.name}
             onClick={() => onSelect(company.name)}
-            className={`flex h-[74px] touch-manipulation items-center rounded-2xl border px-3 text-left transition-[border-color,box-shadow,background-color] duration-150 active:scale-100 ${
+            className={`company-card flex h-[65px] touch-manipulation items-center rounded-2xl border px-3 text-left transition-[border-color,box-shadow,background-color] duration-150 active:scale-100 ${
               selected === company.name
-                ? "border-indigo-300 bg-indigo-50/70 shadow-sm dark:border-indigo-500/40 dark:bg-indigo-500/10"
-                : "border-slate-200/80 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900"
+                ? "border-orange-400 bg-orange-50 shadow-sm dark:border-orange-400/50"
+                : "border-slate-200/80 bg-white hover:border-slate-300 dark:border-white/[0.08]"
             }`}
           >
             {company.name === "All" ? (
-              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-slate-900 text-xs font-bold text-white dark:bg-white dark:text-slate-900">
+              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-slate-900 text-xs font-bold text-white dark:bg-white/[0.08] dark:text-slate-200">
                 All
               </div>
             ) : (
               <CompanyLogo
-                senderName={mockEmails.find((email) => email.companyName === company.name)?.senderName}
-                senderEmail={mockEmails.find((email) => email.companyName === company.name)?.senderEmail}
+                senderName={emails.find((email) => email.companyName === company.name)?.senderName}
+                senderEmail={emails.find((email) => email.companyName === company.name)?.senderEmail}
                 companyName={company.name}
                 size="sm"
               />

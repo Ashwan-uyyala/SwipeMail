@@ -13,3 +13,12 @@ export interface Email {
   category?: string;
   labels: string[];
 }
+
+export type SwipeAction = "spam" | "keep" | "category" | "trash";
+export type EmailFilter =
+  | "all"
+  | "important"
+  | "unread"
+  | "received"
+  | `company:${string}`
+  | `category:${string}`;

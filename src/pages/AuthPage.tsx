@@ -44,6 +44,7 @@ export function AuthPage() {
       provider: "google",
       options: {
         redirectTo: `${window.location.origin}/auth`,
+        scopes: "openid email profile https://www.googleapis.com/auth/gmail.readonly",
         queryParams: {
           access_type: "offline",
           prompt: "consent",
@@ -60,16 +61,16 @@ export function AuthPage() {
   return (
     <main
       className={`relative grid min-h-screen transition-colors duration-500 lg:grid-cols-[1.1fr_0.9fr] ${
-        isDark ? "bg-slate-950" : "bg-slate-50"
+        isDark ? "bg-black" : "bg-[#f3f1ec]"
       }`}
     >
       <div className="absolute right-5 top-5 z-20 sm:right-8 sm:top-8">
         <ThemeToggle />
       </div>
-      <section className="relative hidden overflow-hidden bg-slate-950 text-white lg:flex lg:flex-col lg:justify-between lg:p-12">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.28),_transparent_36%),radial-gradient(circle_at_bottom_right,_rgba(139,92,246,0.22),_transparent_35%)]" />
+      <section className="relative hidden overflow-hidden bg-black text-white lg:flex lg:flex-col lg:justify-between lg:p-12">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(249,115,22,0.2),_transparent_36%),radial-gradient(circle_at_bottom_right,_rgba(234,88,12,0.12),_transparent_35%)]" />
         <div className="relative flex items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-2xl bg-blue-500 shadow-lg shadow-blue-500/20">
+          <div className="grid h-11 w-11 place-items-center rounded-2xl bg-orange-500 shadow-lg shadow-orange-500/20">
             <Mail className="h-5 w-5" />
           </div>
           <span className="text-xl font-semibold tracking-tight">SwipeMail</span>
@@ -77,12 +78,12 @@ export function AuthPage() {
 
         <div className="relative max-w-xl pb-12">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-200">
-            <Sparkles className="h-4 w-4 text-blue-400" />
+            <Sparkles className="h-4 w-4 text-orange-400" />
             A calmer inbox starts here
           </div>
           <h1 className="text-5xl font-semibold leading-[1.08] tracking-tight">
             Make inbox decisions,
-            <span className="block text-blue-400">one swipe at a time.</span>
+            <span className="block text-orange-400">one swipe at a time.</span>
           </h1>
           <p className="mt-6 max-w-lg text-lg leading-8 text-slate-300">
             Keep what matters, archive distractions, and move through email with speed.
@@ -90,33 +91,33 @@ export function AuthPage() {
         </div>
 
         <div className="relative flex items-center gap-3 text-sm text-slate-400">
-          <ShieldCheck className="h-5 w-5 text-emerald-400" />
+          <ShieldCheck className="h-5 w-5 text-orange-400" />
           Secure Google authentication powered by Supabase
         </div>
       </section>
 
       <section
         className={`flex min-h-screen items-center justify-center px-6 py-20 transition-colors duration-500 sm:py-12 ${
-          isDark ? "bg-slate-950" : "bg-slate-50"
+          isDark ? "bg-black" : "bg-[#f3f1ec]"
         }`}
       >
         <div className="w-full max-w-md">
           <div className="mb-10 flex items-center gap-3 lg:hidden">
-            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-blue-600 text-white">
+            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-orange-500 text-white">
               <Mail className="h-5 w-5" />
             </div>
             <span className={`text-xl font-semibold ${isDark ? "text-white" : "text-slate-950"}`}>SwipeMail</span>
           </div>
 
           <div
-            className={`rounded-[28px] border p-7 shadow-xl transition-colors duration-500 sm:p-9 ${
+            className={`dark-panel rounded-[28px] border p-7 shadow-xl transition-colors duration-500 sm:p-9 ${
               isDark
-                ? "border-slate-800 bg-slate-900 shadow-black/20"
+                ? "border-white/10 shadow-black/20"
                 : "border-slate-200 bg-white shadow-slate-900/5"
             }`}
           >
             <div className="mb-8">
-              <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">
+              <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-orange-600">
                 Welcome
               </p>
               <h2 className={`text-3xl font-semibold tracking-tight ${isDark ? "text-white" : "text-slate-950"}`}>
@@ -139,7 +140,7 @@ export function AuthPage() {
               disabled={isSigningIn}
               className={`flex h-14 w-full items-center justify-center gap-3 rounded-2xl border px-5 text-[15px] font-semibold shadow-sm transition duration-300 disabled:cursor-not-allowed disabled:opacity-60 ${
                 isDark
-                  ? "border-slate-700 bg-slate-800 text-slate-100 hover:border-slate-600 hover:bg-slate-700"
+                  ? "border-white/10 bg-white/[0.04] text-slate-100 hover:border-white/20 hover:bg-white/[0.08]"
                   : "border-slate-200 bg-white text-slate-800 hover:border-slate-300 hover:bg-slate-50"
               }`}
             >

@@ -23,7 +23,7 @@ export function AppSidebar({ mobileOpen, onMobileClose, onSignOut }: AppSidebarP
   const content = (
     <>
       <div className="flex h-20 items-center px-6">
-        <div className="grid h-9 w-9 place-items-center rounded-xl bg-indigo-600 text-white shadow-sm">
+        <div className="grid h-9 w-9 place-items-center rounded-xl bg-orange-500 text-white shadow-[0_8px_22px_-10px_rgba(249,115,22,.8)]">
           <Mail className="h-[18px] w-[18px]" />
         </div>
         <div className="ml-3">
@@ -42,8 +42,8 @@ export function AppSidebar({ mobileOpen, onMobileClose, onSignOut }: AppSidebarP
             type="button"
             className={`mb-1 flex h-10 w-full items-center gap-3 rounded-xl px-3 text-[13px] font-medium transition ${
               active
-                ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300"
-                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+                ? "bg-orange-500/10 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400"
+                : "text-slate-500 hover:bg-black/[0.04] hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/[0.055] dark:hover:text-white"
             }`}
           >
             <Icon className="h-[17px] w-[17px]" strokeWidth={1.8} />
@@ -52,11 +52,11 @@ export function AppSidebar({ mobileOpen, onMobileClose, onSignOut }: AppSidebarP
         ))}
       </nav>
 
-      <div className="border-t border-slate-100 px-3 py-4 dark:border-slate-800">
-        <button type="button" className="flex h-10 w-full items-center gap-3 rounded-xl px-3 text-[13px] font-medium text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800">
+      <div className="border-t border-black/[0.06] px-3 py-4 dark:border-white/[0.07]">
+        <button type="button" className="flex h-10 w-full items-center gap-3 rounded-xl px-3 text-[13px] font-medium text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-white/[0.05]">
           <Settings className="h-[17px] w-[17px]" /> Settings
         </button>
-        <button type="button" className="flex h-10 w-full items-center gap-3 rounded-xl px-3 text-[13px] font-medium text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800">
+        <button type="button" className="flex h-10 w-full items-center gap-3 rounded-xl px-3 text-[13px] font-medium text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-white/[0.05]">
           <CircleHelp className="h-[17px] w-[17px]" /> Help
         </button>
         <button type="button" onClick={onSignOut} className="mt-2 flex h-10 w-full items-center gap-3 rounded-xl px-3 text-[13px] font-medium text-slate-500 hover:bg-red-50 hover:text-red-600 dark:text-slate-400 dark:hover:bg-red-500/10">
@@ -68,13 +68,13 @@ export function AppSidebar({ mobileOpen, onMobileClose, onSignOut }: AppSidebarP
 
   return (
     <>
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[238px] flex-col border-r border-slate-200/80 bg-white lg:flex dark:border-slate-800 dark:bg-slate-950">
+      <aside className="dark-panel fixed inset-y-0 left-0 z-30 hidden w-[238px] flex-col border-r border-black/[0.07] bg-[#f7f5f0]/95 lg:flex dark:border-white/[0.07]">
         {content}
       </aside>
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <button type="button" className="absolute inset-0 bg-slate-950/30 backdrop-blur-sm" onClick={onMobileClose} aria-label="Close menu" />
-          <aside className="absolute inset-y-0 left-0 flex w-[280px] flex-col bg-white shadow-2xl dark:bg-slate-950">
+          <aside className="dark-panel absolute inset-y-0 left-0 flex w-[280px] flex-col bg-white shadow-2xl">
             {content}
           </aside>
         </div>
@@ -85,7 +85,7 @@ export function AppSidebar({ mobileOpen, onMobileClose, onSignOut }: AppSidebarP
 
 export function MobileMenuButton({ onClick }: { onClick: () => void }) {
   return (
-    <button type="button" onClick={onClick} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 lg:hidden dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300" aria-label="Open menu">
+    <button type="button" onClick={onClick} className="dark-panel grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 lg:hidden dark:border-white/[0.08] dark:text-slate-300" aria-label="Open menu">
       <Menu className="h-5 w-5" />
     </button>
   );
